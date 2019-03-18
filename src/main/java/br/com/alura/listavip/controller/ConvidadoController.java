@@ -1,22 +1,22 @@
-package br.com.alura.listavip;
+package br.com.alura.listavip.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import br.com.alura.enviadorEmail.EmailService;
 import br.com.alura.listavip.model.Convidado;
 import br.com.alura.listavip.service.ConvidadoService;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 @Controller
 public class ConvidadoController {
 
     @Autowired
     private ConvidadoService service;
-
 
     @RequestMapping("/")
     public String index(){
@@ -45,8 +45,22 @@ public class ConvidadoController {
 
         Iterable<Convidado> convidados = service.obterTodos();
         model.addAttribute("convidados", convidados);
-
         return "listaconvidados";
     }
 
+    @RequestMapping("/listaconvidados/{id}")
+        public ModelAndView findForId(@PathVariable("id") Long id) {
+        ModelAndView modelAndView = new ModelAndView("/detalhe");
+        Convidado convidado = service.obterPorId(id);
+        modelAndView.addObject("convidado", convidado);
+        return modelAndView;
+    }
+
+    @RequestMapping("/{nome}")
+    public ModelAndView findForName(@PathVariable("nome") String nome) {
+        ModelAndView modelAndView = new ModelAndView("/detalhe");
+        List<Convidado> convidado = service.obterPorNome(nome);
+        modelAndView.addObject("convidado", convidado);
+        return modelAndView;
+    }
 }
